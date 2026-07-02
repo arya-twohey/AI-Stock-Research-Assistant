@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Stock Research Assistant</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Alpaca Paper Trading</p>
+        <h1>AI Stock Research Assistant</h1>
+      </div>
+      <div class="market-pill" id="marketStatus">Checking market...</div>
+    </header>
+
+    <nav class="tabs" aria-label="App sections">
+      <button class="tab active" data-tab="overview">Project Overview</button>
+      <button class="tab" data-tab="dashboard">Dashboard</button>
+      <button class="tab" data-tab="research">Research</button>
+      <button class="tab" data-tab="plan">Trade Plan</button>
+      <button class="tab" data-tab="orders">Orders</button>
+    </nav>
+
+    <main>
+      <section class="view active" id="overview">
+        <section class="overview-hero">
+          <div>
+            <p class="eyebrow dark">Research Workspace</p>
+            <h2>Explainable AI research with paper-trading execution.</h2>
+            <p>
+              The workspace combines live Alpaca paper-account data, market research,
+              price history, news, and a human-confirmed trade workflow in one deployable UI.
+            </p>
+          </div>
+          <div class="overview-stat">
+            <span>Execution mode</span>
+            <strong>Paper only</strong>
+            <p>All orders are routed through Alpaca's paper-trading environment.</p>
+          </div>
+        </section>
+
+        <div class="overview-grid">
+          <section class="panel overview-card">
+            <span class="step">01</span>
+            <h2>Account Context</h2>
+            <p>
+              The dashboard reads cash, buying power, portfolio value, positions, and
+              recent orders directly from the connected Alpaca paper account.
+            </p>
+          </section>
+          <section class="panel overview-card">
+            <span class="step">02</span>
+            <h2>Research Flow</h2>
+            <p>
+              Enter a ticker to fetch recent daily bars and related news, then generate
+              a compact stock brief with trend indicators, risks, and catalysts.
+            </p>
+          </section>
+          <section class="panel overview-card">
+            <span class="step">03</span>
+            <h2>Trade Planning</h2>
+            <p>
+              The app previews entry, stop, target, estimated position size, confidence,
+              and reasons before any order button becomes available.
+            </p>
+          </section>
+          <section class="panel overview-card">
+            <span class="step">04</span>
+            <h2>Human Approval</h2>
+            <p>
+              Orders are submitted only after a separate confirmation step, keeping the
+              assistant in a research-and-decision-support role.
+            </p>
+          </section>
+        </div>
+
+        <div class="split overview-split">
+          <section class="panel">
+            <h2>How It Works</h2>
+            <ul class="flow-list">
+              <li><strong>Connect:</strong> Alpaca paper credentials load securely from environment variables.</li>
+              <li><strong>Observe:</strong> The app reads account status, current positions, and order history.</li>
+              <li><strong>Research:</strong> Ticker data is converted into a brief, chart, indicators, news, and risks.</li>
+              <li><strong>Preview:</strong> A trade plan is generated separately from execution.</li>
+              <li><strong>Execute:</strong> Paper orders require an explicit user confirmation.</li>
+            </ul>
+          </section>
+          <section class="panel">
+            <h2>Tech Stack</h2>
+            <div class="stack-grid">
+              <span>Python</span>
+              <span>Alpaca API</span>
+              <span>HTTP Server</span>
+              <span>Vanilla JS</span>
+              <span>Canvas Charts</span>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="dashboard">
+        <div class="metric-grid">
+          <article class="metric">
+            <span>Cash</span>
+            <strong id="cash">--</strong>
+          </article>
+          <article class="metric">
+            <span>Buying Power</span>
+            <strong id="buyingPower">--</strong>
+          </article>
+          <article class="metric">
+            <span>Portfolio Value</span>
+            <strong id="portfolioValue">--</strong>
+          </article>
+          <article class="metric">
+            <span>Account</span>
+            <strong id="accountStatus">--</strong>
+          </article>
+        </div>
+        <div class="split">
+          <section class="panel">
+            <div class="panel-head">
+              <h2>Open Positions</h2>
+              <button class="icon-button" id="refreshDashboard" title="Refresh">↻</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Symbol</th>
+                    <th>Qty</th>
+                    <th>Value</th>
+                    <th>P/L</th>
+                  </tr>
+                </thead>
+                <tbody id="positionsBody"></tbody>
+              </table>
+            </div>
+          </section>
+          <section class="panel">
+            <div class="panel-head">
+              <h2>Recent Orders</h2>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Symbol</th>
+                    <th>Side</th>
+                    <th>Qty</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="recentOrdersBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="research">
+        <section class="toolbar">
+          <label>
+            Ticker
+            <input id="researchSymbol" value="AAPL" autocomplete="off" />
+          </label>
+          <button id="runResearch">Research</button>
+        </section>
+        <div class="research-grid">
+          <section class="panel chart-panel">
+            <div class="panel-head">
+              <h2 id="researchTitle">AAPL Research</h2>
+              <span id="researchChange" class="badge">--</span>
+            </div>
+            <canvas id="priceChart" width="900" height="360"></canvas>
+          </section>
+          <section class="panel">
+            <h2>Stock Brief</h2>
+            <p id="stockBrief" class="brief">Run research to generate a brief.</p>
+            <div class="indicator-grid" id="indicators"></div>
+          </section>
+          <section class="panel">
+            <h2>News</h2>
+            <div id="newsList" class="news-list"></div>
+          </section>
+          <section class="panel">
+            <h2>Risks</h2>
+            <div id="riskList" class="risk-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="plan">
+        <section class="toolbar">
+          <label>
+            Symbol
+            <input id="planSymbol" value="AAPL" autocomplete="off" />
+          </label>
+          <label>
+            Side
+            <select id="planSide">
+              <option value="buy">Buy</option>
+              <option value="sell">Sell</option>
+            </select>
+          </label>
+          <label>
+            Quantity
+            <input id="planQty" type="number" min="0.0001" step="0.0001" value="1" />
+          </label>
+          <button id="previewTrade">Preview</button>
+        </section>
+        <div class="split">
+          <section class="panel trade-card">
+            <h2>Trade Plan</h2>
+            <div class="plan-grid">
+              <span>Entry</span><strong id="planEntry">--</strong>
+              <span>Stop</span><strong id="planStop">--</strong>
+              <span>Target</span><strong id="planTarget">--</strong>
+              <span>Position Size</span><strong id="planSize">--</strong>
+              <span>Confidence</span><strong id="planConfidence">--</strong>
+            </div>
+            <button class="danger" id="submitTrade" disabled>Submit Paper Order</button>
+          </section>
+          <section class="panel">
+            <h2>Reasons</h2>
+            <ul id="planReasons" class="clean-list"></ul>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="orders">
+        <section class="toolbar">
+          <label>
+            Status
+            <select id="ordersStatus">
+              <option value="all">All</option>
+              <option value="open">Open</option>
+              <option value="closed">Closed</option>
+            </select>
+          </label>
+          <button id="refreshOrders">Refresh</button>
+        </section>
+        <section class="panel">
+          <h2>Paper Order History</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Submitted</th>
+                  <th>Symbol</th>
+                  <th>Side</th>
+                  <th>Qty</th>
+                  <th>Status</th>
+                  <th>Fill</th>
+                </tr>
+              </thead>
+              <tbody id="ordersBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status"></div>
+    <script src="/app.js"></script>
+  </body>
+</html>
