@@ -214,6 +214,11 @@
         <div class="split">
           <section class="panel trade-card">
             <h2>Trade Plan</h2>
+            <div class="trade-verdict">
+              <span id="planVerdict">Preview a trade</span>
+              <strong id="planScore">--</strong>
+              <p id="planAnalysis">Enter a symbol and preview to get a buy/watch/avoid read.</p>
+            </div>
             <div class="plan-grid">
               <span>Entry</span><strong id="planEntry">--</strong>
               <span>Stop</span><strong id="planStop">--</strong>
@@ -221,11 +226,11 @@
               <span>Position Size</span><strong id="planSize">--</strong>
               <span>Confidence</span><strong id="planConfidence">--</strong>
             </div>
-            <button class="danger" id="submitTrade" disabled>Submit Paper Order</button>
+            <button id="submitTrade" disabled>Submit Paper Order</button>
           </section>
           <section class="panel">
-            <h2>Reasons</h2>
-            <ul id="planReasons" class="clean-list"></ul>
+            <h2>Analysis</h2>
+            <div id="planReasons" class="analysis-list"></div>
           </section>
         </div>
       </section>

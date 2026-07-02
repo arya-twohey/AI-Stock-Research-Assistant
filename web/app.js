@@ -179,6 +179,19 @@ function riskCards(items) {
     .join("");
 }
 
+function analysisCards(items) {
+  if (!items.length) {
+    return `<p class="brief">Preview a trade to generate setup analysis.</p>`;
+  }
+  return items
+    .map(
+      (item) => `<article class="analysis-item">
+        <p>${item}</p>
+      </article>`,
+    )
+    .join("");
+}
+
 async function runResearch() {
   const symbol = $("researchSymbol").value.trim().toUpperCase() || "AAPL";
   $("researchTitle").textContent = `${symbol} Research`;
@@ -230,7 +243,10 @@ async function previewTrade() {
   $("planTarget").textContent = formatMoney(payload.target);
   $("planSize").textContent = formatMoney(payload.estimatedNotional);
   $("planConfidence").textContent = payload.confidence;
-  $("planReasons").innerHTML = list(payload.reasons || []);
+  $("planVerdict").textContent = payload.verdict || "Trade read";
+  $("planScore").textContent = payload.score === undefined ? "--" : `${payload.score}/100`;
+  $("planAnalysis").textContent = payload.analysis || "";
+  $("planReasons").innerHTML = analysisCards(payload.reasons || []);
   $("submitTrade").disabled = false;
 }
 

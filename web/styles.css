@@ -549,11 +549,59 @@ canvas {
   align-self: start;
 }
 
+.trade-verdict {
+  background: linear-gradient(135deg, #e0f2fe, #d9f5f2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 16px;
+}
+
+.trade-verdict span {
+  color: var(--navy-2);
+  font-size: 13px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.trade-verdict strong {
+  color: var(--navy);
+  font-size: 32px;
+  line-height: 1;
+}
+
+.trade-verdict p {
+  color: #36566d;
+  line-height: 1.45;
+  margin: 0;
+}
+
 .plan-grid {
   display: grid;
   gap: 12px 18px;
   grid-template-columns: minmax(120px, 1fr) minmax(0, 1.3fr);
   margin-top: 18px;
+}
+
+.analysis-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.analysis-item {
+  background: #f8fcfd;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 13px 14px;
+}
+
+.analysis-item p {
+  color: #36566d;
+  line-height: 1.5;
+  margin: 0;
 }
 
 .toast {
