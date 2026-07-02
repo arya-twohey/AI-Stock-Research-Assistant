@@ -325,27 +325,27 @@ def trade_preview(symbol: str, side: str, qty: float) -> dict:
         if side == "buy":
             if sma20 and latest > sma20:
                 score += 16
-                signals.append(f"Price is above the 20-day average (${sma20:,.2f}), which supports a buy setup.")
+                signals.append(f"Above the 20-day average at ${sma20:,.2f}. Trend support is present.")
             else:
                 score -= 14
-                signals.append(f"Price is below the 20-day average (${sma20:,.2f}), so momentum is not fully confirmed.")
+                signals.append(f"Below the 20-day average at ${sma20:,.2f}. Momentum still needs confirmation.")
 
             if sma10 and latest > sma10:
                 score += 10
-                signals.append(f"Short-term trend is constructive with price above the 10-day average (${sma10:,.2f}).")
+                signals.append(f"Holding above the 10-day average at ${sma10:,.2f}. Short-term trend is improving.")
             else:
                 score -= 8
-                signals.append(f"Short-term trend is soft with price below the 10-day average (${sma10:,.2f}).")
+                signals.append(f"Below the 10-day average at ${sma10:,.2f}. Short-term trend is soft.")
 
             if 0.25 <= range_position <= 0.82:
                 score += 10
-                signals.append("Entry is not sitting at the extreme top or bottom of the recent 20-day range.")
+                signals.append("Entry sits in the middle of the recent range, not at an obvious extreme.")
             elif range_position > 0.82:
                 score -= 10
-                signals.append("Entry is close to the recent 20-day high, so buying here risks chasing strength.")
+                signals.append("Entry is close to the recent high. Buying here may chase strength.")
             else:
                 score -= 4
-                signals.append("Entry is near the low end of the recent range, which may be value or a weak tape.")
+                signals.append("Entry is near the low end of the range. That can mean value or weak demand.")
 
             if momentum_10 > 0:
                 score += 8
@@ -356,27 +356,27 @@ def trade_preview(symbol: str, side: str, qty: float) -> dict:
         else:
             if sma20 and latest < sma20:
                 score += 16
-                signals.append(f"Price is below the 20-day average (${sma20:,.2f}), which supports a sell setup.")
+                signals.append(f"Below the 20-day average at ${sma20:,.2f}. Downside pressure is present.")
             else:
                 score -= 14
-                signals.append(f"Price is above the 20-day average (${sma20:,.2f}), so downside momentum is not confirmed.")
+                signals.append(f"Above the 20-day average at ${sma20:,.2f}. Downside momentum is not confirmed.")
 
             if momentum_10 < 0:
                 score += 10
                 signals.append(f"Ten-day momentum is negative at {momentum_10:+.2f}%.")
             else:
                 score -= 8
-                signals.append(f"Ten-day momentum is positive at {momentum_10:+.2f}%, which works against a sell.")
+                signals.append(f"Ten-day momentum is positive at {momentum_10:+.2f}%. That works against a sell.")
 
         if reward_risk >= 1.8:
             score += 10
-            signals.append(f"The plan has about {reward_risk:.1f}:1 reward-to-risk based on the stop and target.")
+            signals.append(f"Reward-to-risk is about {reward_risk:.1f} to 1 using the stop and target.")
         elif reward_risk >= 1.2:
             score += 2
-            signals.append(f"The plan has a modest {reward_risk:.1f}:1 reward-to-risk profile.")
+            signals.append(f"Reward-to-risk is modest at about {reward_risk:.1f} to 1.")
         else:
             score -= 10
-            signals.append(f"The reward-to-risk profile is weak at about {reward_risk:.1f}:1.")
+            signals.append(f"Reward-to-risk is weak at about {reward_risk:.1f} to 1.")
 
         score = max(0, min(100, round(score)))
     else:
@@ -387,19 +387,19 @@ def trade_preview(symbol: str, side: str, qty: float) -> dict:
         ]
 
     if score >= 70:
-        verdict = "Buy setup looks favorable" if side == "buy" else "Sell setup looks favorable"
+        verdict = "Buy setup" if side == "buy" else "Sell setup"
         confidence = "high"
+        summary = "The chart has enough confirmation to look actionable."
     elif score >= 55:
-        verdict = "Watchlist: wait for confirmation"
+        verdict = "Watchlist"
         confidence = "medium"
+        summary = "The setup is close, but it needs a cleaner confirmation."
     else:
-        verdict = "Do not buy yet" if side == "buy" else "Do not sell yet"
+        verdict = "Wait"
         confidence = "low"
+        summary = "The current setup does not justify action yet."
 
-    analysis = (
-        f"{clean_symbol} scores {score}/100 for this {side} plan. "
-        f"The read is: {verdict.lower()}."
-    )
+    analysis = f"{clean_symbol} scores {score} out of 100. {summary}"
 
     return {
         "symbol": clean_symbol,
